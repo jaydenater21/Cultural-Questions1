@@ -1,0 +1,16 @@
+{
+    "name": "your-app-name",
+    "version": "1.0.0",
+    "scripts": {
+      "predeploy": "npm run build",
+      "deploy": "gh-pages -d build"
+    },
+    "devDependencies": {
+      "gh-pages": "^3.2.3"
+    },
+    "dependencies": {
+
+    },
+    "homepage": "https://jaydenater21.github.io/Cultural-Questions1"
+  }
+  
