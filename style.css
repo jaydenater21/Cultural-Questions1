@@ -14,10 +14,10 @@ body {
 .main {
     text-align: center;
     align-items: center;
-    background-color:  #f1c27d;
+    background-color:  rgb(231, 222, 201);
     border-radius: 15px;
     transition: transform 0.2s;
-    width: 30%;
+    width: 50%;
 
 }
 
@@ -59,15 +59,17 @@ button {
     margin-top: 15px;
     margin-bottom: 15px;
     border: none;
-    color: #f1c27d;
+    color: rgb(231, 222, 201);
     cursor: pointer;
-    background-color:#f1c27d;
+    background-color:#c68642;
     width: 100%;
     font-size: 16px;
 }
 
 .wrap {
-    display: flex;
-    justify-content: center;
     align-items: center;
+    display: contents;
+    color:  #c68642;
+    width: 10%;
+    max-width: 10%;
 }
