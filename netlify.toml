@@ -1,2 +1,11 @@
 [build]
   functions = "netlify/functions"
+
+
+[[edge_functions]]
+function = "createPost.js"
+path = "/test"
+
+[[edge_functions]]
+function = "submitReply.js"
+path = "/test"
