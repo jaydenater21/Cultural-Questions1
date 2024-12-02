@@ -7,71 +7,12 @@
 </head>
 </body>
 
-<div class="wrap">
-    <form id="loginForm">
-        <div class="user-info">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required />
-        </div>
-
-        <div class="password-info">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required />
-        </div>
-
-        <button type="submit">Login</button>
-    </form>
-</div>
-
-<script>
-    document.getElementById('loginForm').addEventListener('submit', async function(event) {
-        event.preventDefault();  // Prevent the form from submitting normally
-
-        // Get the form data
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        // Prepare the data to be sent in the POST request
-        const loginData = {
-            username: username,
-            password: password
-        };
-
-        try {
-            // Send POST request to the backend (NestJS)
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(loginData)
-            });
-
-            // Check if the response is OK (successful login)
-            if (response.ok) {
-                // Redirect to main.html on successful login
-                window.location.href = 'main.html';
-            } else {
-                // Handle failed login (e.g., incorrect credentials)
-                const errorMessage = await response.text();
-                alert(`Login failed: ${errorMessage}`);
-            }
-        } catch (error) {
-            // Handle any network or server errors
-            console.error('Error during login:', error);
-            alert('An error occurred during login. Please try again later.');
-        }
-    });
-</script>
- <h1>continue without loging in 
+ <h1>continue 
     <a href="terms.html" style="text-decoration: none;">
         here
     </a>
  </h1>
- 
- <a href="account.html" style="text-decoration: none;">
-    Create an account
-</a>
+
 </div>
 </body>
 <style>
@@ -130,11 +71,7 @@ h3 {
 </style>
 <body>
 
-<div class="container">
-<h2>Welcome to Cultural Questions</h2>
-<h3>Have you ever thought about how different cultures go about their daily lives or what makes their delicious food so special?</h3>
-<h3>Exploring cultural questions can connect you with people from those cultures and open up a whole new world of experiences!</h3>
-</div>
+
 
 
 </html>
