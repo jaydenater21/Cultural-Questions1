@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f1c27d; /* Background color */
+            background-color: #f1c27d;
             margin: 0;
             padding: 0;
         }
@@ -23,9 +23,9 @@
 
         h1 {
             text-align: center;
-            color: #c68642; /* Text color */
+            color: #c68642;
             font-style: oblique;
-            text-shadow: 2px 2px 5px #ffdbac; /* Text shadow */
+            text-shadow: 2px 2px 5px #ffdbac;
         }
 
         .form-section {
@@ -49,7 +49,7 @@
         }
 
         button {
-            background-color: #c68642; /* Button color */
+            background-color: #c68642;
             color: rgb(231, 222, 201);
             padding: 12px 20px;
             border: none;
@@ -59,7 +59,7 @@
         }
 
         button:hover {
-            background-color: #a15e32; /* Darker button color on hover */
+            background-color: #a15e32;
         }
 
         .messages {
@@ -76,8 +76,8 @@
             margin: 0;
             color: #333;
             font-style: oblique;
-            text-shadow: 2px 2px 5px #ffdbac; /* Text shadow */
-            text-decoration-color: #c68642; /* Text decoration color */
+            text-shadow: 2px 2px 5px #ffdbac;
+            text-decoration-color: #c68642;
         }
 
         .message p {
@@ -106,7 +106,6 @@
     <div class="container">
         <h1>Cultural Questions</h1>
 
-        <!-- Forum form section -->
         <div class="form-section">
             <h1>Back to rules
                 <a href="index.html" style="text-decoration: none;">
@@ -131,10 +130,8 @@
             </form>
         </div>
 
-        <!-- Displaying forum messages -->
         <div class="messages" id="messages">
             <h2>Recent Posts</h2>
-            <!-- Posts will be dynamically loaded here -->
         </div>
     </div>
 
@@ -142,11 +139,10 @@
         const form = document.getElementById('postForm');
         const messagesContainer = document.getElementById('messages');
 
-        // Handle form submission
+        // Handle form submission for creating a post
         form.addEventListener('submit', async function(event) {
             event.preventDefault();
 
-            // Get the input values
             const name = document.getElementById('name').value;
             const title = document.getElementById('title').value;
             const culture = document.getElementById('culture').value;
@@ -155,21 +151,18 @@
             const postData = { name, title, culture, message };
 
             try {
-                // Send the POST request to the backend (replace with your own backend endpoint)
-                const response = await fetch('http://172.20.10.4:3000/posts'); {
+                // Send POST request to create a new post
+                const response = await fetch('http://172.20.10.4:3000/posts', {
                     method: 'POST',
-                    headers; {
-                        'Content-Type', 'application/json';
-                    }
-                    body: JSON.stringify(postData);
-                }
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData)
+                });
 
                 if (response.ok) {
-                    // Clear the form fields
-                    form.reset();
-
-                    // Refresh the posts
-                    loadPosts();
+                    form.reset(); // Clear form after submission
+                    loadPosts();  // Refresh the posts
                 } else {
                     const error = await response.json();
                     alert(error.error || 'Error submitting post');
@@ -179,16 +172,16 @@
             }
         });
 
-        // Function to load posts from the server
+        // Function to load posts from the backend
         async function loadPosts() {
             try {
                 const response = await fetch('http://172.20.10.4:3000/posts');
                 const posts = await response.json();
 
-                // Clear the existing messages
+                // Clear current posts
                 messagesContainer.innerHTML = '<h2>Recent Posts</h2>';
 
-                // Render each post
+                // Loop through posts and display them
                 posts.forEach(post => {
                     const postDiv = document.createElement('div');
                     postDiv.classList.add('message');
@@ -202,7 +195,7 @@
                     `;
                     messagesContainer.appendChild(postDiv);
 
-                    // Render replies for this post
+                    // Render replies if available
                     post.replies?.forEach(reply => {
                         const replyDiv = document.createElement('div');
                         replyDiv.classList.add('reply');
@@ -218,7 +211,7 @@
             }
         }
 
-        // Show reply form under each post
+        // Show the reply form under each post
         function showReplyForm(postId) {
             const replyForm = document.createElement('form');
             replyForm.classList.add('reply-form');
@@ -228,30 +221,29 @@
                 <button type="submit">Post Reply</button>
             `;
 
-            // Handle reply submission
+            // Handle reply form submission
             replyForm.addEventListener('submit', async function(event) {
                 event.preventDefault();
 
                 const replyMessage = document.getElementById(`reply-message-${postId}`).value;
                 const replyData = {
                     postId,
-                    name: 'Anonymous', // Add this to use dynamic names
-                    message: replyMessage,
+                    name: 'Anonymous', // Add dynamic name handling if required
+                    message: replyMessage
                 };
 
                 try {
-                    // Send the reply to the backend (this should be handled by your backend)
-                    const response = await fetch('http://172.20.10.4:3000/posts'); {
+                    // Send POST request to create a reply
+                    const response = await fetch('http://172.20.10.4:3000/reply', {
                         method: 'POST',
-                        headers; {
-                            'Content-Type', 'application/json';
-                        }
-                        body: JSON.stringify(replyData);
-                    }
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(replyData)
+                    });
 
                     if (response.ok) {
-                        // Reload the posts to include the new reply
-                        loadPosts();
+                        loadPosts();  // Reload the posts to display the new reply
                     } else {
                         alert('Error submitting reply');
                     }
@@ -260,11 +252,11 @@
                 }
             });
 
-            // Append the reply form under the post
+            // Append the reply form
             document.getElementById(`replies-${postId}`).appendChild(replyForm);
         }
 
-        // Load posts on page load
+        // Load posts when the page loads
         window.onload = loadPosts;
     </script>
 </body>
