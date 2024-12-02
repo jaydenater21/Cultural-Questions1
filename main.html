@@ -179,8 +179,10 @@ form.addEventListener('submit', async function(event) {
 // Function to load posts from the server
 async function loadPosts() {
     try {
-        const response = await fetch('http://172.58.13.78:3000/posts');  // Use the IP address here
+        const response = await fetch('http://172.58.13.78:3000/posts');
         const posts = await response.json();
+
+        console.log('Posts fetched:', posts);  // Log the fetched posts
 
         // Clear the existing messages
         messagesContainer.innerHTML = '<h2>Recent Posts</h2>';
@@ -214,6 +216,8 @@ async function loadPosts() {
         console.error('Error loading posts:', error);
     }
 }
+
+
 
 // Load posts on page load
 window.onload = loadPosts;
