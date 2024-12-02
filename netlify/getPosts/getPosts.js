@@ -1,45 +1,28 @@
-// netlify/edge-functions/getPosts.js
-
 const { Client } = require('@supabase/supabase-js');
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const supabase = new Client('https://mluwlxyfriojitbflifm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sdXdseHlmcmlvaml0YmZsaWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMxNzYyOTgsImV4cCI6MjA0ODc1MjI5OH0.xB9l3vqvKvMxZuNU8Hjaq2Z58K2zMd2E12Gtxox1oZA');
 
-const supabase = new Client(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-export default async function handler(event) {
+exports.handler = async (event, context) => {
     try {
-        // Fetch posts from Supabase
         const { data, error } = await supabase
             .from('posts')
-            .select('*');
+            .select('*')
+            .order('created_at', { ascending: false });
 
         if (error) {
-            console.error('Error fetching posts:', error);
-            return new Response(JSON.stringify({ error: 'Error fetching posts' }), {
-                status: 500,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*', // CORS
-                },
-            });
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ error: error.message })
+            };
         }
 
-        return new Response(JSON.stringify(data), {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
-            },
-        });
+        return {
+            statusCode: 200,
+            body: JSON.stringify(data)
+        };
     } catch (error) {
-        console.error('Error fetching posts:', error);
-        return new Response(JSON.stringify({ error: 'Error fetching posts' }), {
-            status: 500,
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*', // CORS
-            },
-        });
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Internal Server Error' })
+        };
     }
-}
-
+};

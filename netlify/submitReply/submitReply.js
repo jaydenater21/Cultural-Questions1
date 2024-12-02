@@ -1,67 +1,32 @@
-// netlify/functions/submitReply.js
+async function submitReply(postId) {
+  const message = document.getElementById(`replyMessage-${postId}`).value;
 
-const { Client } = require('@supabase/supabase-js');
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+  if (!message) {
+      alert('Please enter a reply message.');
+      return;
+  }
 
-const supabase = new Client(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const replyData = { postId, message };
 
-exports.handler = async function(event, context) {
-    if (event.httpMethod === 'POST') {
-        try {
-            // Parse incoming data
-            const { postId, name, message } = JSON.parse(event.body);
+  try {
+      const response = await fetch('/.netlify/functions/submitReply', {
+          method: 'POST',
+          body: JSON.stringify(replyData),
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      });
 
-            // Insert the new reply into Supabase
-            const { data, error } = await supabase
-                .from('replies')
-                .insert([
-                    {
-                        post_id: postId,
-                        name,
-                        message,
-                        createdAt: new Date().toISOString(),
-                    }
-                ]);
+      const result = await response.json();
 
-            if (error) {
-                console.error('Error inserting reply:', error);
-                return {
-                    statusCode: 500,
-                    body: JSON.stringify({ error: 'Error submitting reply' }),
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
-                    },
-                };
-            }
-
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ message: 'Reply submitted successfully' }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
-                },
-            };
-        } catch (error) {
-            console.error('Error processing the request:', error);
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ error: 'Error processing request' }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
-                },
-            };
-        }
-    }
-
-    return {
-        statusCode: 405,
-        body: JSON.stringify({ error: 'Method Not Allowed' }),
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    };
-};
+      if (response.ok) {
+          alert(result.message);
+          loadPosts(); // Reload posts after submitting reply
+      } else {
+          alert(result.error);
+      }
+  } catch (error) {
+      console.error('Error submitting reply:', error);
+      alert('Failed to submit reply');
+  }
+}
