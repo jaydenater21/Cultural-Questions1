@@ -7,20 +7,16 @@
 </head>
 </body>
 
-<div class="main">
- <h1>login</h1>
- <h3 style="text-align: center;">Enter your login credentials</h3>
-
- <div class="wrap">
-    <form id="loginForm" action="/login" method="post">
+<div class="wrap">
+    <form id="loginForm">
         <div class="user-info">
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+            <input type="text" id="username" name="username" required />
         </div>
 
         <div class="password-info">
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" required />
         </div>
 
         <button type="submit">Login</button>
@@ -28,19 +24,42 @@
 </div>
 
 <script>
-    // Listen for form submission
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting immediately
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        event.preventDefault();  // Prevent the form from submitting normally
 
-        // Perform your validation here
+        // Get the form data
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        if (username === 'validUser' && password === 'validPassword') {
-            // Redirect to main.html if login is successful
-            window.location.href = 'main.html';
-        } else {
-            alert('Invalid credentials');
+        // Prepare the data to be sent in the POST request
+        const loginData = {
+            username: username,
+            password: password
+        };
+
+        try {
+            // Send POST request to the backend (NestJS)
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(loginData)
+            });
+
+            // Check if the response is OK (successful login)
+            if (response.ok) {
+                // Redirect to main.html on successful login
+                window.location.href = 'main.html';
+            } else {
+                // Handle failed login (e.g., incorrect credentials)
+                const errorMessage = await response.text();
+                alert(`Login failed: ${errorMessage}`);
+            }
+        } catch (error) {
+            // Handle any network or server errors
+            console.error('Error during login:', error);
+            alert('An error occurred during login. Please try again later.');
         }
     });
 </script>
