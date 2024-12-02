@@ -1,4 +1,7 @@
 // createPost.js (Netlify Function)
+
+import { MongoClient } from 'mongodb';
+
 const fs = require('fs');
 const path = require('path');
 
