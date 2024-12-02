@@ -38,7 +38,7 @@
             color: #333;
         }
 
-        input[type="text"], textarea {
+        input[type="text"], input[type="password"], textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -83,6 +83,44 @@
             color: #555;
             margin-top: 5px;
         }
+
+        /* Styling the login form */
+        .login-form {
+            width: 50%;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-form h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: #c68642;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .login-form button:hover {
+            background-color: #a15e32;
+        }
     </style>
 </head>
 <body>
@@ -93,14 +131,33 @@
         <h4>This is a place for unity among cultures and is intended for educational purposes. </h4>
         <h4>2: Enjoy yourself and explore the vast variety of cultures. </h4>
     </div>
+
     <div class="form-section">
         <h1> into the cultures
             <a href="main.html" style="text-decoration: none;">
                 here
             </a>
+        </h1>
+    </div>
+
     <div class="container">
         <h2>Welcome to Cultural Questions</h2>
         <h3>Have you ever thought about how different cultures go about their daily lives or what makes their delicious food so special?</h3>
         <h3>Exploring cultural questions can connect you with people from those cultures and open up a whole new world of experiences!</h3>
     </div>
+
+    <!-- Login Form -->
+    <div class="login-form">
+        <h2>Login</h2>
+        <form name="login-form" method="POST" data-netlify="true" action="/thank-you">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required />
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
 </body>
+</html>
