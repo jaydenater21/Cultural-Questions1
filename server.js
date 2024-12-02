@@ -5,11 +5,11 @@ const app = express();
 const port = 3000;
 
 // In-memory storage for posts and replies
-let posts = [];
+let posts = [];  // This will hold posts and their replies
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
-app.use(cors()); // To handle cross-origin requests from the frontend
+app.use(cors()); // Allow cross-origin requests from frontend
 
 // POST request to create a new post
 app.post('/posts', (req, res) => {
@@ -21,7 +21,7 @@ app.post('/posts', (req, res) => {
 
     // Create a new post
     const newPost = {
-        id: posts.length + 1,
+        id: posts.length + 1, // Generate a unique ID for each post
         name,
         title,
         culture,
@@ -36,10 +36,10 @@ app.post('/posts', (req, res) => {
 
 // GET request to get all posts
 app.get('/posts', (req, res) => {
-    res.json(posts);
+    res.json(posts); // Return all posts, including replies
 });
 
-// POST request to create a new reply
+// POST request to create a new reply to a post
 app.post('/reply', (req, res) => {
     const { postId, name, message } = req.body;
 
@@ -60,7 +60,7 @@ app.post('/reply', (req, res) => {
         createdAt: new Date()
     };
 
-    post.replies.push(newReply);
+    post.replies.push(newReply); // Push the reply to the post's replies array
     res.status(201).json(newReply); // Send the created reply back
 });
 
@@ -68,4 +68,3 @@ app.post('/reply', (req, res) => {
 app.listen(port, '172.20.10.4', () => {
     console.log(`Server is running on http://172.20.10.4:${port}`);
 });
-
