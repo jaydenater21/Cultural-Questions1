@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -65,7 +64,8 @@ app.post('/reply', (req, res) => {
     res.status(201).json(newReply); // Send the created reply back
 });
 
-// Start the server
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+// Start the server, binding it to 172.20.10.4
+app.listen(port, '172.20.10.4', () => {
+    console.log(`Server is running on http://172.20.10.4:${port}`);
 });
+
