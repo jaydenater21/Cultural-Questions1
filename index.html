@@ -1,172 +1,281 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cultural Questions</title>
-    <link rel="stylesheet" href="style.css">
-    <h1 style="text-align: center;" style="size: 500cm;" style="font-family: Impact;">Cultural Questions</h1>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f1e0c6; /* Soft background color */
+            color: #4d4d4d;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        /* Panel Styles */
+        .panel-container {
+            background-color: #f8e0b0; /* Soft beige background */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+
+        .panel-container h1 {
+            font-size: 36px;
+            text-align: center;
+            color: #c68642; /* Warm accent color */
+            font-style: italic;
+            text-shadow: 2px 2px 5px rgba(200, 200, 200, 0.8);
+        }
+
+        .panel-container h3, .panel-container h4 {
+            text-align: center;
+            color: #555;
+        }
+
+        /* Form Section Styles */
+        .form-section {
+            width: 100%;
+            background-color: #c68642;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            text-align: center;
+            color: white;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .form-section input[type="email"], .form-section input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        .form-section input:focus {
+            outline: none;
+            border: 1px solid #c68642;
+            box-shadow: 0 0 8px rgba(200, 104, 66, 0.3);
+        }
+
+        .form-section button {
+            width: 100%;
+            padding: 14px;
+            background-color: #c68642;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-section button:hover {
+            background-color: #a15e32;
+        }
+
+        .form-section a {
+            display: block;
+            text-align: center;
+            color: #fff;
+            font-size: 16px;
+            margin-top: 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .form-section a:hover {
+            color: #ffdbac; /* Lighter color on hover */
+        }
+
+        /* Additional Message Styles */
+        .message {
+            color: #4d4d4d;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .message p {
+            font-size: 16px;
+        }
+
+        /* Custom Styles for Post and Reply Section */
+        body {
+            background-color: #f1c27d;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: rgb(231, 222, 201);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #c68642;
+            font-style: oblique;
+            text-shadow: 2px 2px 5px #ffdbac;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid rgb(231, 222, 201);
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #c68642;
+            color: rgb(231, 222, 201);
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #a15e32;
+        }
+
+        .messages {
+            border-top: 2px solid rgb(231, 222, 201);
+            padding-top: 20px;
+        }
+
+        .message {
+            border-bottom: 1px solid rgb(231, 222, 201);
+            padding: 10px 0;
+        }
+
+        .message h3 {
+            margin: 0;
+            color: #333;
+            font-style: oblique;
+            text-shadow: 2px 2px 5px #ffdbac;
+            text-decoration-color: #c68642;
+        }
+
+        .message p {
+            color: #555;
+            margin-top: 5px;
+        }
+    </style>
 </head>
-</body>
-<style>
-body {
-    background-color:  #f1c27d;
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-
-
-title {
-    text-shadow: 5px 5px 5px #c68642;
-
-}
-
-h2 {
-    text-align: center;
-    font-size: 2.5rem;
-    color: #c68642;
-    font-style: oblique;
-    text-shadow: 2px 2px 5px #ffdbac;
-    text-decoration-color: #c68642;
-    margin: 10px;
-    width: 100%;
-    max-width: 100%;
-}
-
-h3 {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #4f4f4f;
-    font-style: oblique;
-    text-shadow: 2px 2px 5px #ffdbac;
-    text-decoration-color: #c68642;
-    margin: 10px;
-    width: 100%;
-    max-width: 100%;
-
-}
-
-.container {
-    text-align: center;
-    padding: 50px;
-    border-radius: 15px;
-    background-color: #f1c27d;
-    width: 80%;
-    max-width: 80%;
-}
-</style>
 <body>
-    <head>
-        <link rel="stylesheet" href="style.css">
-        <title>Cultural Questions</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color:  #f1c27d;
-                margin: 0;
-                padding: 0;
-            }
-    
-            .container {
-                width: 80%;
-                margin: 20px auto;
-                background-color: rgb(231, 222, 201);
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-    
-            h1 {
-                text-align: center;
-                color: #c68642; /* Text color */
-                font-style: oblique;
-                text-shadow: 2px 2px 5px #ffdbac; /* Text shadow */
-            }
-    
-            .form-section {
-                margin-bottom: 30px;
-            }
-    
-            label {
-                font-weight: bold;
-                display: block;
-                margin-bottom: 8px;
-                color: #333;
-            }
-    
-            input[type="text"], textarea {
-                width: 100%;
-                padding: 10px;
-                margin-bottom: 10px;
-                border-radius: 5px;
-                border: 1px solid rgb(231, 222, 201);
-                box-sizing: border-box;
-            }
-    
-            button {
-                background-color: #c68642; /* Button color */
-                color: rgb(231, 222, 201);
-                padding: 12px 20px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                width: 100%;
-            }
-    
-            button:hover {
-                background-color: #a15e32; /* Darker button color on hover */
-            }
-    
-            .messages {
-                border-top: 2px solid rgb(231, 222, 201);
-                padding-top: 20px;
-            }
-    
-            .message {
-                border-bottom: 1px solid rgb(231, 222, 201);
-                padding: 10px 0;
-            }
-    
-            .message h3 {
-                margin: 0;
-                color: #333;
-                font-style: oblique;
-                text-shadow: 2px 2px 5px #ffdbac; /* Text shadow */
-                text-decoration-color: #c68642; /* Text decoration color */
-            }
-    
-            .message p {
-                color: #555;
-                margin-top: 5px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>rules</h1>
-            <h3>Follow these rules.</h3>
-            <h4>1: Absolutely no hate speech whatsoever. </h4>
-            <h4>This is a place for unity among cultures and is intended for educational purposes. </h4>
-            <h4>2: Enjoy yourself and explore the vast variety of cultures. </h4>
-        </div>
-        <div class="form-section">
-            <h1> into the cultures
-                <a href="main.html" style="text-decoration: none;">
-                    here
-                </a>
-        <div class="container">
-            <h2>Welcome to Cultural Questions</h2>
-            <h3>Have you ever thought about how different cultures go about their daily lives or what makes their delicious food so special?</h3>
-            <h3>Exploring cultural questions can connect you with people from those cultures and open up a whole new world of experiences!</h3>
-        </div>
-    </body>
+    <!-- Rules Panel -->
+    <div class="panel-container">
+        <h1>Rules</h1>
+        <h3>Follow these rules.</h3>
+        <h4>1: Absolutely no hate speech whatsoever.</h4>
+        <h4>This is a place for unity among cultures and is intended for educational purposes.</h4>
+        <h4>2: Enjoy yourself and explore the vast variety of cultures.</h4>
+    </div>
 
+    <!-- Login Form Section -->
+    <div class="form-section">
+        <h2>Login</h2>
+        <form id="login-form">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" placeholder="Enter your email" required />
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password" required />
+            <button type="submit">Login</button>
+        </form>
+        
+        <!-- Link to create an account page -->
+        <a href="account.html">Don't have an account? Create one here.</a>
+    </div>
 
+    <!-- Welcome Panel -->
+    <div class="panel-container">
+        <h2>Welcome to Cultural Questions</h2>
+        <h3>Ever thought about how different cultures live their daily lives or what makes their food special?</h3>
+        <h3>Explore cultural questions and connect with people from diverse backgrounds!</h3>
+    </div>
 
+    <!-- Create Post Section -->
+    <div class="form-section">
+        <h2>Create a new post</h2>
+        <form id="postForm">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
 
+            <label for="title">Post Title:</label>
+            <input type="text" id="title" name="title" placeholder="Enter Culture/race/ethnicity" required>
+
+            <label for="culture">Culture/race/ethnicity:</label>
+            <input type="text" id="culture" name="culture" placeholder="Enter culture" required>
+
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" placeholder="Enter your message here..." rows="4" required></textarea>
+
+            <button type="submit">Post Message</button>
+        </form>
+    </div>
+
+    <!-- Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+        // Initialize Netlify Identity
+        netlifyIdentity.init();
+
+        // Login form handler
+        const loginForm = document.getElementById("login-form");
+        loginForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+
+            // Login with Netlify Identity
+            netlifyIdentity.login({email, password}).then(function(user) {
+                alert(`Welcome back, ${user.user_metadata.full_name}!`);
+            }).catch(function(error) {
+                alert(`Error: ${error.message}`);
+            });
+        });
+    </script>
+</body>
 </html>
+
