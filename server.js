@@ -5,11 +5,11 @@ const app = express();
 const port = 3000;
 
 // In-memory storage for posts and replies
-let posts = [];  // This will hold posts and their replies
+let posts = [];
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
-app.use(cors()); // Allow cross-origin requests from frontend
+app.use(cors()); // To handle cross-origin requests from the frontend
 
 // POST request to create a new post
 app.post('/posts', (req, res) => {
@@ -21,7 +21,7 @@ app.post('/posts', (req, res) => {
 
     // Create a new post
     const newPost = {
-        id: posts.length + 1, // Generate a unique ID for each post
+        id: posts.length + 1,
         name,
         title,
         culture,
@@ -36,10 +36,10 @@ app.post('/posts', (req, res) => {
 
 // GET request to get all posts
 app.get('/posts', (req, res) => {
-    res.json(posts); // Return all posts, including replies
+    res.json(posts);
 });
 
-// POST request to create a new reply to a post
+// POST request to create a new reply
 app.post('/reply', (req, res) => {
     const { postId, name, message } = req.body;
 
@@ -60,11 +60,11 @@ app.post('/reply', (req, res) => {
         createdAt: new Date()
     };
 
-    post.replies.push(newReply); // Push the reply to the post's replies array
+    post.replies.push(newReply);
     res.status(201).json(newReply); // Send the created reply back
 });
 
-// Start the server, binding it to 172.20.10.4
-app.listen(port, '172.20.10.4', () => {
-    console.log(`Server is running on http://172.20.10.4:${port}`);
+// Start the server, binding it to all available network interfaces (0.0.0.0)
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server is running on http://0.0.0.0:${port}`);
 });

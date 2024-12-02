@@ -153,7 +153,7 @@ form.addEventListener('submit', async function(event) {
 
     try {
         // Send the POST request to the backend
-        const response = await fetch('http://172.20.10.4:3000/posts', {
+        const response = await fetch('http://172.58.13.78:3000/posts', {  // Use the IP address here
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -179,7 +179,7 @@ form.addEventListener('submit', async function(event) {
 // Function to load posts from the server
 async function loadPosts() {
     try {
-        const response = await fetch('http://172.20.10.4:3000/posts');
+        const response = await fetch('http://172.58.13.78:3000/posts');  // Use the IP address here
         const posts = await response.json();
 
         // Clear the existing messages
