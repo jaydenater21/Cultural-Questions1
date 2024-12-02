@@ -1,62 +1,71 @@
+// server.js
 const express = require('express');
-const fs = require('fs');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
 const app = express();
 const port = 3000;
 
-// Enable CORS and JSON parsing
-app.use(cors());
+// In-memory storage for posts and replies
+let posts = [];
+
+// Middleware to parse JSON bodies
 app.use(bodyParser.json());
+app.use(cors()); // To handle cross-origin requests from the frontend
 
-// Path to the file that will store the posts
-const postsFilePath = './posts.json';
+// POST request to create a new post
+app.post('/posts', (req, res) => {
+    const { name, title, culture, message } = req.body;
+    
+    if (!name || !title || !culture || !message) {
+        return res.status(400).json({ error: 'All fields are required.' });
+    }
 
-// Function to load posts from the JSON file
-const loadPosts = () => {
-  if (fs.existsSync(postsFilePath)) {
-    const data = fs.readFileSync(postsFilePath, 'utf8');
-    return JSON.parse(data);
-  }
-  return []; // Return an empty array if the file doesn't exist
-};
+    // Create a new post
+    const newPost = {
+        id: posts.length + 1,
+        name,
+        title,
+        culture,
+        message,
+        createdAt: new Date(),
+        replies: []
+    };
 
-// Function to save posts to the JSON file
-const savePosts = (posts) => {
-  fs.writeFileSync(postsFilePath, JSON.stringify(posts, null, 2));
-};
-
-// API endpoint to get all posts
-app.get('/posts', (req, res) => {
-  const posts = loadPosts();
-  res.json(posts);
+    posts.push(newPost);
+    res.status(201).json(newPost); // Send the created post back
 });
 
-// API endpoint to create a new post
-app.post('/posts', (req, res) => {
-  const { name, title, culture, message } = req.body;
-  
-  if (!name || !title || !culture || !message) {
-    return res.status(400).json({ error: 'All fields are required' });
-  }
+// GET request to get all posts
+app.get('/posts', (req, res) => {
+    res.json(posts);
+});
 
-  const posts = loadPosts();
-  const newPost = {
-    name,
-    title,
-    culture,
-    message,
-    createdAt: new Date()
-  };
+// POST request to create a new reply
+app.post('/reply', (req, res) => {
+    const { postId, name, message } = req.body;
 
-  posts.push(newPost);
-  savePosts(posts);
+    if (!postId || !name || !message) {
+        return res.status(400).json({ error: 'All fields are required for replies.' });
+    }
 
-  res.status(201).json(newPost);
+    // Find the post to reply to
+    const post = posts.find(p => p.id === postId);
+    if (!post) {
+        return res.status(404).json({ error: 'Post not found.' });
+    }
+
+    // Create a new reply
+    const newReply = {
+        name,
+        message,
+        createdAt: new Date()
+    };
+
+    post.replies.push(newReply);
+    res.status(201).json(newReply); // Send the created reply back
 });
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server is running on http://localhost:${port}`);
 });
