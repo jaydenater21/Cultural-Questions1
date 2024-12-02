@@ -1,47 +1,45 @@
 // netlify/edge-functions/getPosts.js
 
-import { createClient } from '@supabase/supabase-js'
+const { Client } = require('@supabase/supabase-js');
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
-const supabaseUrl = 'https://mluwlxyfriojitbflifm.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = new Client(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Dynamically import Supabase client for Edge function
 export default async function handler(event) {
-  try {
-      const { createClient } = await import('@supabase/supabase-js');  // Dynamically import Supabase client
+    try {
+        // Fetch posts from Supabase
+        const { data, error } = await supabase
+            .from('posts')
+            .select('*');
 
-      // Get Supabase credentials from environment variables
-      const supabaseUrl = process.env.SUPABASE_DATABASE_URL;
-      const supabaseKey = process.env.SUPABASE_ANON_KEY;
-      
-      // Initialize Supabase client
-      const supabase = createClient(supabaseUrl, supabaseKey);
+        if (error) {
+            console.error('Error fetching posts:', error);
+            return new Response(JSON.stringify({ error: 'Error fetching posts' }), {
+                status: 500,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*', // CORS
+                },
+            });
+        }
 
-      // Fetch posts from Supabase database (posts table)
-      const { data, error } = await supabase
-          .from('posts')  // Assuming 'posts' is your table name
-          .select('*');
-
-      if (error) {
-          throw error;
-      }
-
-      // Return the fetched posts
-      return new Response(JSON.stringify(data), {
-          status: 200,
-          headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*',  // CORS header
-          },
-      });
-  } catch (error) {
-      console.error("Error fetching posts:", error);
-      return new Response(JSON.stringify({ error: 'Error fetching posts' }), {
-          status: 500,
-          headers: {
-              'Content-Type': 'application/json',
-          },
-      });
-  }
+        return new Response(JSON.stringify(data), {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
+            },
+        });
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        return new Response(JSON.stringify({ error: 'Error fetching posts' }), {
+            status: 500,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*', // CORS
+            },
+        });
+    }
 }
+

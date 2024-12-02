@@ -1,65 +1,67 @@
 // netlify/functions/submitReply.js
 
-import { createClient } from '@supabase/supabase-js'
+const { Client } = require('@supabase/supabase-js');
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
-const supabaseUrl = 'https://mluwlxyfriojitbflifm.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = new Client(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-export default async function handler(event, context) {
-  try {
-      // Dynamically import Supabase client for edge function
-      const { createClient } = await import('@supabase/supabase-js');  // Dynamically import Supabase client
+exports.handler = async function(event, context) {
+    if (event.httpMethod === 'POST') {
+        try {
+            // Parse incoming data
+            const { postId, name, message } = JSON.parse(event.body);
 
-      // Get Supabase credentials from environment variables
-      const supabaseUrl = process.env.SUPABASE_DATABASE_URL;
-      const supabaseKey = process.env.SUPABASE_ANON_KEY;
-      
-      // Initialize Supabase client
-      const supabase = createClient(supabaseUrl, supabaseKey);
+            // Insert the new reply into Supabase
+            const { data, error } = await supabase
+                .from('replies')
+                .insert([
+                    {
+                        post_id: postId,
+                        name,
+                        message,
+                        createdAt: new Date().toISOString(),
+                    }
+                ]);
 
-      if (event.httpMethod === 'POST') {
-          const { postId, name, message } = JSON.parse(event.body);
+            if (error) {
+                console.error('Error inserting reply:', error);
+                return {
+                    statusCode: 500,
+                    body: JSON.stringify({ error: 'Error submitting reply' }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
+                    },
+                };
+            }
 
-          // Add the reply
-          const reply = { name, message, createdAt: new Date().toISOString() };
+            return {
+                statusCode: 200,
+                body: JSON.stringify({ message: 'Reply submitted successfully' }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
+                },
+            };
+        } catch (error) {
+            console.error('Error processing the request:', error);
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ error: 'Error processing request' }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
+                },
+            };
+        }
+    }
 
-          // Update the post with the reply in Supabase (assuming replies column is JSONB)
-          const { data, error } = await supabase
-              .from('posts')  // Assuming 'posts' is your table name
-              .update({
-                  replies: supabase.raw('array_append(replies, ?)', [reply])  // Append the reply to the 'replies' array
-              })
-              .eq('id', postId)  // Find the post by postId
-              .single();
-
-          if (error) {
-              throw error;
-          }
-
-          // Return success response
-          return new Response(JSON.stringify({ message: 'Reply submitted successfully' }), {
-              status: 200,
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Access-Control-Allow-Origin': '*',  // CORS header
-              },
-          });
-      }
-
-      return new Response(JSON.stringify({ error: 'Method Not Allowed' }), {
-          status: 405,
-          headers: {
-              'Content-Type': 'application/json',
-          },
-      });
-  } catch (error) {
-      console.error('Error submitting reply:', error);
-      return new Response(JSON.stringify({ error: 'Error submitting reply' }), {
-          status: 500,
-          headers: {
-              'Content-Type': 'application/json',
-          },
-      });
-  }
-}
+    return {
+        statusCode: 405,
+        body: JSON.stringify({ error: 'Method Not Allowed' }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+};

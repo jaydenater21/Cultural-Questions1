@@ -11,7 +11,6 @@
             margin: 0;
             padding: 0;
         }
-
         .container {
             width: 80%;
             margin: 20px auto;
@@ -20,25 +19,21 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
         h1 {
             text-align: center;
             color: #c68642;
             font-style: oblique;
             text-shadow: 2px 2px 5px #ffdbac;
         }
-
         .form-section {
             margin-bottom: 30px;
         }
-
         label {
             font-weight: bold;
             display: block;
             margin-bottom: 8px;
             color: #333;
         }
-
         input[type="text"], textarea {
             width: 100%;
             padding: 10px;
@@ -47,7 +42,6 @@
             border: 1px solid rgb(231, 222, 201);
             box-sizing: border-box;
         }
-
         button {
             background-color: #c68642;
             color: rgb(231, 222, 201);
@@ -57,21 +51,17 @@
             cursor: pointer;
             width: 100%;
         }
-
         button:hover {
             background-color: #a15e32;
         }
-
         .messages {
             border-top: 2px solid rgb(231, 222, 201);
             padding-top: 20px;
         }
-
         .message {
             border-bottom: 1px solid rgb(231, 222, 201);
             padding: 10px 0;
         }
-
         .message h3 {
             margin: 0;
             color: #333;
@@ -79,12 +69,10 @@
             text-shadow: 2px 2px 5px #ffdbac;
             text-decoration-color: #c68642;
         }
-
         .message p {
             color: #555;
             margin-top: 5px;
         }
-
         .reply-form {
             margin-left: 20px;
             background-color: #f1e2b3;
@@ -92,7 +80,6 @@
             border-radius: 5px;
             margin-top: 10px;
         }
-
         .reply {
             margin-left: 40px;
             background-color: #f8f4d6;
@@ -108,37 +95,26 @@
 
         <div class="form-section">
             <h2>Create a new post</h2>
-            <form id="postForm">
-                <label for="name">Your Name:</label>
-                <input type="text" id="name" name="name" placeholder="Enter your name" required>
-
-                <label for="title">Post Title:</label>
-                <input type="text" id="title" name="title" placeholder="Enter Culture/race/ethnicity" required>
-
-                <label for="culture">Culture/race/ethnicity:</label>
-                <input type="text" id="culture" name="culture" placeholder="Enter culture" required>
-
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" placeholder="Enter your message here..." rows="4" required></textarea>
-
-                <button type="submit">Post Message</button>
-            </form>
+            <label for="name">Your Name</label>
+            <input type="text" id="name" placeholder="Enter your name">
+            
+            <label for="title">Post Title</label>
+            <input type="text" id="title" placeholder="Enter the title of your post">
+            
+            <label for="culture">Culture</label>
+            <input type="text" id="culture" placeholder="Enter the culture related to your post">
+            
+            <label for="message">Your Message</label>
+            <textarea id="message" placeholder="Enter your message" rows="4"></textarea>
+            
+            <button id="submitPost">Submit Post</button>
         </div>
 
-        <div class="messages" id="messages">
-            <h2>Recent Posts</h2>
-        </div>
+        <div class="messages" id="postsList"></div>
     </div>
 
     <script>
-        const form = document.getElementById('postForm');
-        const messagesContainer = document.getElementById('messages');
-
-        // Handle form submission
-        form.addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            // Get the input values
+        document.getElementById('submitPost').addEventListener('click', async function() {
             const name = document.getElementById('name').value;
             const title = document.getElementById('title').value;
             const culture = document.getElementById('culture').value;
@@ -147,115 +123,92 @@
             const postData = { name, title, culture, message };
 
             try {
-                // Send the POST request to the Netlify function
                 const response = await fetch('/.netlify/functions/createPost', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
                     body: JSON.stringify(postData),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 });
 
-                if (response.ok) {
-                    // Clear the form fields
-                    form.reset();
+                const result = await response.json();
 
-                    // Refresh the posts
-                    loadPosts();
+                if (response.ok) {
+                    alert(result.message);
+                    loadPosts(); // Reload posts after submitting
                 } else {
-                    const error = await response.json();
-                    alert(error.error || 'Error submitting post');
+                    alert(result.error);
                 }
             } catch (error) {
                 console.error('Error submitting post:', error);
+                alert('Failed to submit post');
             }
         });
 
-        // Load posts function
         async function loadPosts() {
             try {
-                const response = await fetch('/.netlify/functions/getPosts');  // Create another Netlify function for fetching posts
+                const response = await fetch('/.netlify/functions/getPosts');
                 const posts = await response.json();
+                const postsList = document.getElementById('postsList');
 
-                // Clear the existing messages
-                messagesContainer.innerHTML = '<h2>Recent Posts</h2>';
-
-                // Render each post
+                postsList.innerHTML = ''; // Clear previous posts
                 posts.forEach(post => {
-                    const postDiv = document.createElement('div');
-                    postDiv.classList.add('message');
-                    postDiv.innerHTML = `
-                        <h3>${post.name} - ${post.title}</h3>
-                        <p><strong>Culture/race/ethnicity:</strong> ${post.culture}</p>
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('message');
+                    postElement.innerHTML = `
+                        <h3>${post.title} - ${post.name}</h3>
                         <p>${post.message}</p>
-                        <p><small>Posted on: ${new Date(post.createdAt).toLocaleString()}</small></p>
-                        <button onclick="showReplyForm(${post.id})">Reply</button>
-                        <div id="replies-${post.id}"></div>
+                        <div class="reply-form">
+                            <label for="replyMessage-${post.id}">Reply:</label>
+                            <textarea id="replyMessage-${post.id}" rows="3" placeholder="Enter your reply"></textarea>
+                            <button onclick="submitReply(${post.id})">Submit Reply</button>
+                        </div>
                     `;
-                    messagesContainer.appendChild(postDiv);
+                    postsList.appendChild(postElement);
                 });
             } catch (error) {
                 console.error('Error loading posts:', error);
             }
         }
 
-        // Show reply form
-        function showReplyForm(postId) {
-            const postDiv = document.getElementById(`replies-${postId}`);
-            if (!postDiv.querySelector('.reply-form')) {
-                const replyForm = document.createElement('div');
-                replyForm.classList.add('reply-form');
-                replyForm.innerHTML = `
-                    <h4>Reply to this post</h4>
-                    <label for="reply-name-${postId}">Your Name:</label>
-                    <input type="text" id="reply-name-${postId}" name="name" required>
-                    <label for="reply-message-${postId}">Message:</label>
-                    <textarea id="reply-message-${postId}" name="message" rows="4" required></textarea>
-                    <button type="button" onclick="submitReply(${postId})">Submit Reply</button>
-                `;
-                postDiv.appendChild(replyForm);
-            }
-        }
-
-        // Submit a reply
         async function submitReply(postId) {
-            const name = document.getElementById(`reply-name-${postId}`).value;
-            const message = document.getElementById(`reply-message-${postId}`).value;
+            const message = document.getElementById(`replyMessage-${postId}`).value;
 
-            const replyData = { postId, name, message };
+            if (!message) {
+                alert('Please enter a reply message.');
+                return;
+            }
+
+            const replyData = { postId, message };
 
             try {
                 const response = await fetch('/.netlify/functions/submitReply', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
                     body: JSON.stringify(replyData),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 });
 
+                const result = await response.json();
+
                 if (response.ok) {
-                    // Refresh the posts and clear the reply form
-                    loadPosts();
+                    alert(result.message);
+                    loadPosts(); // Reload posts after submitting reply
                 } else {
-                    const error = await response.json();
-                    alert(error.error || 'Error submitting reply');
+                    alert(result.error);
                 }
             } catch (error) {
                 console.error('Error submitting reply:', error);
+                alert('Failed to submit reply');
             }
         }
 
-        // Load posts when the page loads
+        // Load posts on page load
         loadPosts();
     </script>
 </body>
 </html>
-
-
-
-
-
-
 
 
 

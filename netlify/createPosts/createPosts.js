@@ -1,59 +1,64 @@
-// createPost.js (Netlify Function)
+// netlify/functions/createPost.js
 
-import { createClient } from '@supabase/supabase-js';
+const { Client } = require('@supabase/supabase-js');
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.SUPABASE_DATABASE_URL, // Database URL from environment variables
-  process.env.SUPABASE_SERVICE_ROLE_KEY // Service role key from environment variables
-);
+const supabase = new Client(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-exports.handler = async (event, context) => {
+exports.handler = async function(event, context) {
     if (event.httpMethod === 'POST') {
-        const { name, title, culture, message } = JSON.parse(event.body);
+        try {
+            // Parse incoming data
+            const { name, title, culture, message } = JSON.parse(event.body);
 
-        // Validate incoming data
-        if (!name || !title || !culture || !message) {
+            // Insert the new post into Supabase
+            const { data, error } = await supabase
+                .from('posts')
+                .insert([
+                    {
+                        name,
+                        title,
+                        culture,
+                        message,
+                        createdAt: new Date().toISOString(),
+                    }
+                ]);
+
+            if (error) {
+                console.error('Error inserting post:', error);
+                return {
+                    statusCode: 500,
+                    body: JSON.stringify({ error: 'Error creating post' }),
+                };
+            }
+
             return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Missing required fields' }),
-            };
-        }
-
-        // Insert the new post into the 'posts' table
-        const { data, error } = await supabase
-            .from('posts') // Assuming you have a 'posts' table
-            .insert([
-                {
-                    name,
-                    title,
-                    culture,
-                    message,
-                    created_at: new Date().toISOString(),
-                    replies: [], // Default empty replies
+                statusCode: 200,
+                body: JSON.stringify({ message: 'Post created successfully' }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
                 },
-            ]);
-
-        if (error) {
-            console.error('Error creating post:', error.message);
+            };
+        } catch (error) {
+            console.error('Error processing the request:', error);
             return {
                 statusCode: 500,
-                body: JSON.stringify({ error: 'Error creating post' }),
+                body: JSON.stringify({ error: 'Error processing request' }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
+                },
             };
         }
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: 'Post created successfully', data }),
-        };
     }
 
     return {
         statusCode: 405,
         body: JSON.stringify({ error: 'Method Not Allowed' }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
     };
 };
-
-
-
-
