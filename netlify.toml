@@ -13,3 +13,7 @@ path = "/test"
 [[edge_functions]]
 function = "createPost"
 path = "/test"
+
+[[edge_functions]]
+function = "getPosts"
+path = "/test"
