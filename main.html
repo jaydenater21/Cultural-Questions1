@@ -241,7 +241,7 @@
 
                 try {
                     // Send the reply to the backend (this should be handled by your backend)
-                    const response = await fetch('http://localhost:3000/reply', {
+                    const response = await fetch('http://localhost:3000', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
