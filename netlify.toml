@@ -9,3 +9,7 @@ path = "/test"
 [[edge_functions]]
 function = "submitReply.js"
 path = "/test"
+
+[[edge_functions]]
+function = "createPost"
+path = "/test"
