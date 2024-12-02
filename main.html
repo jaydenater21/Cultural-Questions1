@@ -107,11 +107,6 @@
         <h1>Cultural Questions</h1>
 
         <div class="form-section">
-            <h1>Back to rules
-                <a href="index.html" style="text-decoration: none;">
-                    here
-                </a>
-            </h1>
             <h2>Create a new post</h2>
             <form id="postForm">
                 <label for="name">Your Name:</label>
@@ -152,8 +147,8 @@
             const postData = { name, title, culture, message };
 
             try {
-                // Send the POST request to the backend using 0.0.0.0
-                const response = await fetch('http://0.0.0.0:3000/posts', {
+                // Send the POST request to the backend
+                const response = await fetch('http://localhost:3000/posts', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -179,7 +174,7 @@
         // Function to load posts from the server
         async function loadPosts() {
             try {
-                const response = await fetch('http://0.0.0.0:3000/posts');
+                const response = await fetch('http://localhost:3000/posts');
                 const posts = await response.json();
 
                 // Clear the existing messages
@@ -215,10 +210,54 @@
             }
         }
 
-        // Load posts on page load
-        window.onload = loadPosts;
+        // Show the reply form
+        function showReplyForm(postId) {
+            const postDiv = document.getElementById(`replies-${postId}`);
+            if (!postDiv.querySelector('.reply-form')) {
+                const replyForm = document.createElement('div');
+                replyForm.classList.add('reply-form');
+                replyForm.innerHTML = `
+                    <h4>Reply to this post</h4>
+                    <label for="reply-name-${postId}">Your Name:</label>
+                    <input type="text" id="reply-name-${postId}" name="name" required>
+                    <label for="reply-message-${postId}">Message:</label>
+                    <textarea id="reply-message-${postId}" name="message" rows="4" required></textarea>
+                    <button type="button" onclick="submitReply(${postId})">Submit Reply</button>
+                `;
+                postDiv.appendChild(replyForm);
+            }
+        }
 
+        // Submit a reply
+        async function submitReply(postId) {
+            const name = document.getElementById(`reply-name-${postId}`).value;
+            const message = document.getElementById(`reply-message-${postId}`).value;
+
+            const replyData = { postId, name, message };
+
+            try {
+                const response = await fetch('http://localhost:3000/reply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(replyData),
+                });
+
+                if (response.ok) {
+                    // Refresh the posts and clear the reply form
+                    loadPosts();
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Error submitting reply');
+                }
+            } catch (error) {
+                console.error('Error submitting reply:', error);
+            }
+        }
+
+        // Load posts when the page loads
+        loadPosts();
     </script>
 </body>
 </html>
-
