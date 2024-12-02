@@ -1,27 +1,32 @@
 // netlify/edge-functions/getPosts.js
 
-// Use dynamic import for MongoDB to avoid bundling issues with Edge
+// Dynamically import Supabase client for Edge function
 export default async function handler(event) {
     try {
-        const { MongoClient } = await import('mongodb');  // Dynamically import MongoDB
+        const { createClient } = await import('@supabase/supabase-js');  // Dynamically import Supabase client
 
-        const uri = "mongodb+srv://<username>:<password>@cluster0.vnroy.mongodb.net/<dbname>?retryWrites=true&w=majority";
-        const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-        // Connect to MongoDB
-        await client.connect();
-
-        const db = client.db('<dbname>');
-        const collection = db.collection('posts');
+        // Get Supabase credentials from environment variables
+        const supabaseUrl = process.env.SUPABASE_DATABASE_URL;
+        const supabaseKey = process.env.SUPABASE_ANON_KEY;
         
-        // Fetch posts from the database
-        const posts = await collection.find({}).toArray();
+        // Initialize Supabase client
+        const supabase = createClient(supabaseUrl, supabaseKey);
 
-        return new Response(JSON.stringify(posts), {
+        // Fetch posts from Supabase database (posts table)
+        const { data, error } = await supabase
+            .from('posts')  // Assuming 'posts' is your table name
+            .select('*');
+
+        if (error) {
+            throw error;
+        }
+
+        // Return the fetched posts
+        return new Response(JSON.stringify(data), {
             status: 200,
             headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',  // Add CORS headers
+                'Access-Control-Allow-Origin': '*',  // CORS header
             },
         });
     } catch (error) {
@@ -34,4 +39,3 @@ export default async function handler(event) {
         });
     }
 }
-
