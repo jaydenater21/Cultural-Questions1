@@ -84,12 +84,28 @@
             color: #555;
             margin-top: 5px;
         }
+
+        .reply-form {
+            margin-left: 20px;
+            background-color: #f1e2b3;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .reply {
+            margin-left: 40px;
+            background-color: #f8f4d6;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
-    <div>
+    <div class="container">
         <h1>Cultural Questions</h1>
-        
+
         <!-- Forum form section -->
         <div class="form-section">
             <h1>Back to rules
@@ -139,7 +155,7 @@
             const postData = { name, title, culture, message };
 
             try {
-                // Send the POST request to the backend
+                // Send the POST request to the backend (replace with your own backend endpoint)
                 const response = await fetch('http://localhost:3000/posts', {
                     method: 'POST',
                     headers: {
@@ -181,12 +197,71 @@
                         <p><strong>Culture/race/ethnicity:</strong> ${post.culture}</p>
                         <p>${post.message}</p>
                         <p><small>Posted on: ${new Date(post.createdAt).toLocaleString()}</small></p>
+                        <button onclick="showReplyForm(${post.id})">Reply</button>
+                        <div id="replies-${post.id}"></div>
                     `;
                     messagesContainer.appendChild(postDiv);
+
+                    // Render replies for this post
+                    post.replies?.forEach(reply => {
+                        const replyDiv = document.createElement('div');
+                        replyDiv.classList.add('reply');
+                        replyDiv.innerHTML = `
+                            <p><strong>${reply.name}:</strong> ${reply.message}</p>
+                            <p><small>Posted on: ${new Date(reply.createdAt).toLocaleString()}</small></p>
+                        `;
+                        document.getElementById(`replies-${post.id}`).appendChild(replyDiv);
+                    });
                 });
             } catch (error) {
                 console.error('Error loading posts:', error);
             }
+        }
+
+        // Show reply form under each post
+        function showReplyForm(postId) {
+            const replyForm = document.createElement('form');
+            replyForm.classList.add('reply-form');
+            replyForm.innerHTML = `
+                <label for="reply-message">Your Reply:</label>
+                <textarea id="reply-message-${postId}" name="message" placeholder="Enter your reply..." rows="3" required></textarea>
+                <button type="submit">Post Reply</button>
+            `;
+
+            // Handle reply submission
+            replyForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const replyMessage = document.getElementById(`reply-message-${postId}`).value;
+                const replyData = {
+                    postId,
+                    name: 'Anonymous', // Add this to use dynamic names
+                    message: replyMessage,
+                };
+
+                try {
+                    // Send the reply to the backend (this should be handled by your backend)
+                    const response = await fetch('http://localhost:3000/reply', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(replyData),
+                    });
+
+                    if (response.ok) {
+                        // Reload the posts to include the new reply
+                        loadPosts();
+                    } else {
+                        alert('Error submitting reply');
+                    }
+                } catch (error) {
+                    console.error('Error submitting reply:', error);
+                }
+            });
+
+            // Append the reply form under the post
+            document.getElementById(`replies-${postId}`).appendChild(replyForm);
         }
 
         // Load posts on page load
