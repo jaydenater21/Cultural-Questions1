@@ -1,5 +1,11 @@
 // netlify/edge-functions/getPosts.js
 
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = 'https://mluwlxyfriojitbflifm.supabase.co'
+const supabaseKey = process.env.SUPABASE_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
+
 // Dynamically import Supabase client for Edge function
 export default async function handler(event) {
   try {

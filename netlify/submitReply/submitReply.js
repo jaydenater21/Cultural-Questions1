@@ -1,5 +1,11 @@
 // netlify/functions/submitReply.js
 
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = 'https://mluwlxyfriojitbflifm.supabase.co'
+const supabaseKey = process.env.SUPABASE_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
+
 export default async function handler(event, context) {
   try {
       // Dynamically import Supabase client for edge function
