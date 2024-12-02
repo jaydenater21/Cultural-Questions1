@@ -25,11 +25,27 @@
          placeholder="Enter your Password" required>
 
      <div class="wrap">
-         <button  type="submit" href="index.html" style="text-align: center;" >
-             <a href="main.html" style="text-decoration: none;">
-                Submit
-            </a>
-         </button>
+        <form action="/login" method="post">
+
+            <div class="user-info">
+    
+                <label for="username">Username:</label>
+    
+                <input type="text" id="username" name="username" required>
+    
+            </div>
+    
+            <div class="password-info">
+    
+                <label for="password">Password:</label>
+    
+                <input type="password" id="password" name="password" required>
+    
+            </div>
+    
+            <button type="submit">Login</button>
+    
+        </form>
      </div>
  </form>
  <h1>continue without loging in 
