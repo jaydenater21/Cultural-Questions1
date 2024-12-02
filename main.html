@@ -132,132 +132,119 @@
 
     <script>
         const form = document.getElementById('postForm');
-        const messagesContainer = document.getElementById('messages');
+const messagesContainer = document.getElementById('messages');
 
-        // Handle form submission
-        form.addEventListener('submit', async function(event) {
-            event.preventDefault();
+// Handle form submission
+form.addEventListener('submit', async function (event) {
+    event.preventDefault();
 
-            // Get the input values
-            const name = document.getElementById('name').value;
-            const title = document.getElementById('title').value;
-            const culture = document.getElementById('culture').value;
-            const message = document.getElementById('message').value;
+    // Get the input values
+    const name = document.getElementById('name').value;
+    const title = document.getElementById('title').value;
+    const culture = document.getElementById('culture').value;
+    const message = document.getElementById('message').value;
 
-            const postData = { name, title, culture, message };
+    const postData = { name, title, culture, message };
 
-            try {
-                // Send the POST request to the backend
-                const response = await fetch('http://localhost:3000/posts', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(postData),
-                });
-
-                if (response.ok) {
-                    // Clear the form fields
-                    form.reset();
-
-                    // Refresh the posts
-                    loadPosts();
-                } else {
-                    const error = await response.json();
-                    alert(error.error || 'Error submitting post');
-                }
-            } catch (error) {
-                console.error('Error submitting post:', error);
-            }
+    try {
+        // Send the POST request to the Netlify function
+        const response = await fetch('/.netlify/functions/createPost', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(postData),
         });
 
-        // Function to load posts from the server
-        async function loadPosts() {
-            try {
-                const response = await fetch('http://localhost:3000/posts');
-                const posts = await response.json();
+        if (response.ok) {
+            // Clear the form fields
+            form.reset();
 
-                // Clear the existing messages
-                messagesContainer.innerHTML = '<h2>Recent Posts</h2>';
-
-                // Render each post
-                posts.forEach(post => {
-                    const postDiv = document.createElement('div');
-                    postDiv.classList.add('message');
-                    postDiv.innerHTML = `
-                        <h3>${post.name} - ${post.title}</h3>
-                        <p><strong>Culture/race/ethnicity:</strong> ${post.culture}</p>
-                        <p>${post.message}</p>
-                        <p><small>Posted on: ${new Date(post.createdAt).toLocaleString()}</small></p>
-                        <button onclick="showReplyForm(${post.id})">Reply</button>
-                        <div id="replies-${post.id}"></div>
-                    `;
-                    messagesContainer.appendChild(postDiv);
-
-                    // Render replies for this post
-                    post.replies?.forEach(reply => {
-                        const replyDiv = document.createElement('div');
-                        replyDiv.classList.add('reply');
-                        replyDiv.innerHTML = `
-                            <p><strong>${reply.name}:</strong> ${reply.message}</p>
-                            <p><small>Posted on: ${new Date(reply.createdAt).toLocaleString()}</small></p>
-                        `;
-                        document.getElementById(`replies-${post.id}`).appendChild(replyDiv);
-                    });
-                });
-            } catch (error) {
-                console.error('Error loading posts:', error);
-            }
+            // Refresh the posts
+            loadPosts();
+        } else {
+            const error = await response.json();
+            alert(error.error || 'Error submitting post');
         }
+    } catch (error) {
+        console.error('Error submitting post:', error);
+    }
+});
 
-        // Show the reply form
-        function showReplyForm(postId) {
-            const postDiv = document.getElementById(`replies-${postId}`);
-            if (!postDiv.querySelector('.reply-form')) {
-                const replyForm = document.createElement('div');
-                replyForm.classList.add('reply-form');
-                replyForm.innerHTML = `
-                    <h4>Reply to this post</h4>
-                    <label for="reply-name-${postId}">Your Name:</label>
-                    <input type="text" id="reply-name-${postId}" name="name" required>
-                    <label for="reply-message-${postId}">Message:</label>
-                    <textarea id="reply-message-${postId}" name="message" rows="4" required></textarea>
-                    <button type="button" onclick="submitReply(${postId})">Submit Reply</button>
-                `;
-                postDiv.appendChild(replyForm);
-            }
+// Load posts function
+async function loadPosts() {
+    try {
+        const response = await fetch('/.netlify/functions/getPosts');  // Create another Netlify function for fetching posts
+        const posts = await response.json();
+
+        // Clear the existing messages
+        messagesContainer.innerHTML = '<h2>Recent Posts</h2>';
+
+        // Render each post
+        posts.forEach(post => {
+            const postDiv = document.createElement('div');
+            postDiv.classList.add('message');
+            postDiv.innerHTML = `
+                <h3>${post.name} - ${post.title}</h3>
+                <p><strong>Culture/race/ethnicity:</strong> ${post.culture}</p>
+                <p>${post.message}</p>
+                <p><small>Posted on: ${new Date(post.createdAt).toLocaleString()}</small></p>
+                <button onclick="showReplyForm(${post.id})">Reply</button>
+                <div id="replies-${post.id}"></div>
+            `;
+            messagesContainer.appendChild(postDiv);
+        });
+    } catch (error) {
+        console.error('Error loading posts:', error);
+    }
+}
+
+// Show reply form
+function showReplyForm(postId) {
+    const postDiv = document.getElementById(`replies-${postId}`);
+    if (!postDiv.querySelector('.reply-form')) {
+        const replyForm = document.createElement('div');
+        replyForm.classList.add('reply-form');
+        replyForm.innerHTML = `
+            <h4>Reply to this post</h4>
+            <label for="reply-name-${postId}">Your Name:</label>
+            <input type="text" id="reply-name-${postId}" name="name" required>
+            <label for="reply-message-${postId}">Message:</label>
+            <textarea id="reply-message-${postId}" name="message" rows="4" required></textarea>
+            <button type="button" onclick="submitReply(${postId})">Submit Reply</button>
+        `;
+        postDiv.appendChild(replyForm);
+    }
+}
+
+// Submit a reply
+async function submitReply(postId) {
+    const name = document.getElementById(`reply-name-${postId}`).value;
+    const message = document.getElementById(`reply-message-${postId}`).value;
+
+    const replyData = { postId, name, message };
+
+    try {
+        const response = await fetch('/.netlify/functions/submitReply', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(replyData),
+        });
+
+        if (response.ok) {
+            // Refresh the posts and clear the reply form
+            loadPosts();
+        } else {
+            const error = await response.json();
+            alert(error.error || 'Error submitting reply');
         }
+    } catch (error) {
+        console.error('Error submitting reply:', error);
+    }
+}
 
-        // Submit a reply
-        async function submitReply(postId) {
-            const name = document.getElementById(`reply-name-${postId}`).value;
-            const message = document.getElementById(`reply-message-${postId}`).value;
-
-            const replyData = { postId, name, message };
-
-            try {
-                const response = await fetch('http://localhost:3000/reply', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(replyData),
-                });
-
-                if (response.ok) {
-                    // Refresh the posts and clear the reply form
-                    loadPosts();
-                } else {
-                    const error = await response.json();
-                    alert(error.error || 'Error submitting reply');
-                }
-            } catch (error) {
-                console.error('Error submitting reply:', error);
-            }
-        }
-
-        // Load posts when the page loads
-        loadPosts();
     </script>
 </body>
 </html>
