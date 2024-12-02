@@ -1,91 +1,15 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="stylesheet" href="style.css">
     <title>Cultural Questions</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color:  #f1c27d;
-            margin: 0;
-            padding: 0;
-        }
+            <style>
+        /* Your existing styles... */
 
-        .container {
-            width: 80%;
-            margin: 20px auto;
-            background-color: rgb(231, 222, 201);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #c68642; /* Text color */
-            font-style: oblique;
-            text-shadow: 2px 2px 5px #ffdbac; /* Text shadow */
-        }
-
+        /* Styling the login and signup forms */
         .form-section {
-            margin-bottom: 30px;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        input[type="text"], input[type="password"], textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid rgb(231, 222, 201);
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #c68642; /* Button color */
-            color: rgb(231, 222, 201);
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        button:hover {
-            background-color: #a15e32; /* Darker button color on hover */
-        }
-
-        .messages {
-            border-top: 2px solid rgb(231, 222, 201);
-            padding-top: 20px;
-        }
-
-        .message {
-            border-bottom: 1px solid rgb(231, 222, 201);
-            padding: 10px 0;
-        }
-
-        .message h3 {
-            margin: 0;
-            color: #333;
-            font-style: oblique;
-            text-shadow: 2px 2px 5px #ffdbac; /* Text shadow */
-            text-decoration-color: #c68642; /* Text decoration color */
-        }
-
-        .message p {
-            color: #555;
-            margin-top: 5px;
-        }
-
-        /* Styling the login form */
-        .login-form {
             width: 50%;
             margin: 20px auto;
             padding: 30px;
@@ -94,13 +18,12 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
 
-        .login-form h2 {
+        .form-section h2 {
             text-align: center;
             color: #333;
         }
 
-        .login-form input[type="text"],
-        .login-form input[type="password"] {
+        .form-section input[type="text"], .form-section input[type="password"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -108,7 +31,7 @@
             border: 1px solid #ccc;
         }
 
-        .login-form button {
+        .form-section button {
             width: 100%;
             padding: 12px;
             background-color: #c68642;
@@ -118,10 +41,18 @@
             cursor: pointer;
         }
 
-        .login-form button:hover {
+        .form-section button:hover {
             background-color: #a15e32;
         }
+
+        .message {
+            color: #333;
+            text-align: center;
+            margin-top: 10px;
+        }
+
     </style>
+   
 </head>
 <body>
     <div class="container">
@@ -134,9 +65,7 @@
 
     <div class="form-section">
         <h1> into the cultures
-            <a href="main.html" style="text-decoration: none;">
-                here
-            </a>
+            <a href="main.html" style="text-decoration: none;">here</a>
         </h1>
     </div>
 
@@ -146,18 +75,43 @@
         <h3>Exploring cultural questions can connect you with people from those cultures and open up a whole new world of experiences!</h3>
     </div>
 
-    <!-- Login Form -->
-    <div class="login-form">
+    <!-- Link to the Sign-Up page (account.html) -->
+    <div class="form-section">
+        <h2>Don't have an account? <a href="account.html">Create one here</a></h2>
+    </div>
+
+    <!-- Login form -->
+    <div class="form-section">
         <h2>Login</h2>
-        <form name="login-form" method="POST" data-netlify="true" action="/thank-you">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required />
-
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required />
-
+        <form id="login-form">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" required />
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" required />
             <button type="submit">Login</button>
         </form>
     </div>
+
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+        // Initialize Netlify Identity
+        netlifyIdentity.init();
+
+        // Login form handler
+        const loginForm = document.getElementById("login-form");
+        loginForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+
+            // Login with Netlify Identity
+            netlifyIdentity.login({email, password}).then(function(user) {
+                alert(`Welcome back, ${user.user_metadata.full_name}!`);
+            }).catch(function(error) {
+                alert(`Error: ${error.message}`);
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Create an Account</title>
+    <style>
+        /* Your existing styles... */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Your Account</h1>
+        <p>Join us and explore the diverse cultures around the world.</p>
+    </div>
+
+    <div class="form-section">
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <label for="signup-email">Email</label>
+            <input type="email" id="signup-email" required />
+            <label for="signup-password">Password</label>
+            <input type="password" id="signup-password" required />
+            <button type="submit">Sign Up</button>
+        </form>
+        <div class="message" id="signup-message"></div>
+    </div>
+
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+        // Initialize Netlify Identity
+        netlifyIdentity.init();
+
+        // Sign-up form handler
+        const signupForm = document.getElementById("signup-form");
+        const signupMessage = document.getElementById("signup-message");
+
+        signupForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById("signup-email").value;
+            const password = document.getElementById("signup-password").value;
+
+            // Sign-up with Netlify Identity
+            netlifyIdentity.signup(email, password).then(function(user) {
+                signupMessage.innerText = `Welcome, ${user.user_metadata.full_name}! Your account has been created.`;
+            }).catch(function(error) {
+                signupMessage.innerText = `Error: ${error.message}`;
+            });
+        });
+    </script>
+</body>
+</html>
