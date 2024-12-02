@@ -2,15 +2,24 @@
     "name": "your-app-name",
     "version": "1.0.0",
     "scripts": {
-      "predeploy": "npm run build",
-      "deploy": "gh-pages -d build"
+        "predeploy": "npm run build",
+        "deploy": "gh-pages -d build",
+        "start": "node server.js"
     },
     "devDependencies": {
-      "gh-pages": "^3.2.3"
+        "gh-pages": "^3.2.3"
     },
+    "homepage": "https://jaydenater21.github.io/Cultural-Questions1",
+    "main": "server.js",
+    "directories": {
+        "doc": "docs"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
     "dependencies": {
-
-    },
-    "homepage": "https://jaydenater21.github.io/Cultural-Questions1"
-  }
-  
+        "body-parser": "^1.20.3",
+        "express": "^4.21.1"
+    }
+}

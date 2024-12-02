@@ -5,111 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cultural Questions</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f1c27d; /* Background color */
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            width: 80%;
-            margin: 20px auto;
-            background-color: rgb(231, 222, 201);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #c68642; /* Text color */
-            font-style: oblique;
-            text-shadow: 2px 2px 5px #ffdbac; /* Text shadow */
-        }
-
-        .form-section {
-            margin-bottom: 30px;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid rgb(231, 222, 201);
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #c68642; /* Button color */
-            color: rgb(231, 222, 201);
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        button:hover {
-            background-color: #a15e32; /* Darker button color on hover */
-        }
-
-        .messages {
-            border-top: 2px solid rgb(231, 222, 201);
-            padding-top: 20px;
-        }
-
-        .message {
-            border-bottom: 1px solid rgb(231, 222, 201);
-            padding: 10px 0;
-        }
-
-        .message h3 {
-            margin: 0;
-            color: #333;
-            font-style: oblique;
-            text-shadow: 2px 2px 5px #ffdbac; /* Text shadow */
-            text-decoration-color: #c68642; /* Text decoration color */
-        }
-
-        .message p {
-            color: #555;
-            margin-top: 5px;
-        }
+        /* Include your styles here */
     </style>
 </head>
 <body>
-
-    <div >
+    <div>
         <h1>Cultural Questions</h1>
         
         <!-- Forum form section -->
         <div class="form-section">
-            <h1>back to rules
+            <h1>Back to rules
                 <a href="index.html" style="text-decoration: none;">
                     here
                 </a>
-             </h1>
+            </h1>
             <h2>Create a new post</h2>
-            <form action="" method="post">
+            <form id="postForm">
                 <label for="name">Your Name:</label>
                 <input type="text" id="name" name="name" placeholder="Enter your name" required>
 
                 <label for="title">Post Title:</label>
                 <input type="text" id="title" name="title" placeholder="Enter Culture/race/ethnicity" required>
-                
 
-                <label for="title">Culture/race/ethnicity:</label>
-                <input type="text" id="title" name="title" placeholder="Enter post title" required>
-
+                <label for="culture">Culture/race/ethnicity:</label>
+                <input type="text" id="culture" name="culture" placeholder="Enter culture" required>
 
                 <label for="message">Message:</label>
                 <textarea id="message" name="message" placeholder="Enter your message here..." rows="4" required></textarea>
@@ -119,22 +38,82 @@
         </div>
 
         <!-- Displaying forum messages -->
-        <div class="messages">
+        <div class="messages" id="messages">
             <h2>Recent Posts</h2>
-
-            <!-- Example message -->
-            <div class="message">
-                <h3>John Doe - What is the best programming language?</h3>
-                <p>I'm curious to know which programming language you prefer for web development. I personally enjoy using JavaScript, but I'd love to hear your thoughts!</p>
-            </div>
-
-            <div class="message">
-                <h3>Jane Smith - Tips for learning Python</h3>
-                <p>I've recently started learning Python, and I am looking for tips and resources to improve my skills. Any suggestions?</p>
-            </div>
-
+            <!-- Posts will be dynamically loaded here -->
         </div>
     </div>
 
+    <script>
+        // Get the form and the messages container
+        const form = document.getElementById('postForm');
+        const messagesContainer = document.getElementById('messages');
+
+        // Handle form submission
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Get the input values
+            const name = document.getElementById('name').value;
+            const title = document.getElementById('title').value;
+            const culture = document.getElementById('culture').value;
+            const message = document.getElementById('message').value;
+
+            const postData = { name, title, culture, message };
+
+            try {
+                // Send the POST request to the backend
+                const response = await fetch('/posts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(postData),
+                });
+
+                if (response.ok) {
+                    // Clear the form fields
+                    form.reset();
+
+                    // Refresh the posts
+                    loadPosts();
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Error submitting post');
+                }
+            } catch (error) {
+                console.error('Error submitting post:', error);
+            }
+        });
+
+        // Function to load posts from the server
+        async function loadPosts() {
+            try {
+                const response = await fetch('/posts');
+                const posts = await response.json();
+
+                // Clear the existing messages
+                messagesContainer.innerHTML = '<h2>Recent Posts</h2>';
+
+                // Render each post
+                posts.forEach(post => {
+                    const postDiv = document.createElement('div');
+                    postDiv.classList.add('message');
+                    postDiv.innerHTML = `
+                        <h3>${post.name} - ${post.title}</h3>
+                        <p><strong>Culture/race/ethnicity:</strong> ${post.culture}</p>
+                        <p>${post.message}</p>
+                        <p><small>Posted on: ${new Date(post.createdAt).toLocaleString()}</small></p>
+                    `;
+                    messagesContainer.appendChild(postDiv);
+                });
+            } catch (error) {
+                console.error('Error loading posts:', error);
+            }
+        }
+
+        // Load posts on page load
+        window.onload = loadPosts;
+    </script>
 </body>
 </html>
