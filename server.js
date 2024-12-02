@@ -64,7 +64,7 @@ app.post('/reply', (req, res) => {
     res.status(201).json(newReply); // Send the created reply back
 });
 
-// Start the server, binding it to all available network interfaces (0.0.0.0)
+// Start the server, binding it to 0.0.0.0 to allow access from all interfaces
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server is running on http://0.0.0.0:${port}`);
 });
