@@ -123,7 +123,6 @@
     </div>
 
     <script>
-        // Get the form and the messages container
         const form = document.getElementById('postForm');
         const messagesContainer = document.getElementById('messages');
 
@@ -141,7 +140,7 @@
 
             try {
                 // Send the POST request to the backend
-                const response = await fetch('/posts', {
+                const response = await fetch('http://localhost:3000/posts', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -167,7 +166,7 @@
         // Function to load posts from the server
         async function loadPosts() {
             try {
-                const response = await fetch('/posts');
+                const response = await fetch('http://localhost:3000/posts');
                 const posts = await response.json();
 
                 // Clear the existing messages
