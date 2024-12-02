@@ -1,10 +1,13 @@
-const { Client } = require('@supabase/supabase-js');
-const supabase = new Client('https://mluwlxyfriojitbflifm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sdXdseHlmcmlvaml0YmZsaWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMxNzYyOTgsImV4cCI6MjA0ODc1MjI5OH0.xB9l3vqvKvMxZuNU8Hjaq2Z58K2zMd2E12Gtxox1oZA');
+const { createClient } = require('@supabase/supabase-js');
+const supabase = createClient('https://mluwlxyfriojitbflifm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sdXdseHlmcmlvaml0YmZsaWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMxNzYyOTgsImV4cCI6MjA0ODc1MjI5OH0.xB9l3vqvKvMxZuNU8Hjaq2Z58K2zMd2E12Gtxox1oZA'); // Replace with env variables for production
 
 exports.handler = async (event, context) => {
     try {
         // Parse the incoming request body
         const { name, title, culture, message } = JSON.parse(event.body);
+
+        // Log the incoming data for debugging purposes
+        console.log('Request body:', { name, title, culture, message });
 
         // Validate input (optional but recommended)
         if (!name || !title || !culture || !message) {
@@ -21,7 +24,7 @@ exports.handler = async (event, context) => {
 
         // Handle potential errors from Supabase
         if (error) {
-            console.error('Error inserting post:', error);
+            console.error('Error inserting post:', error);  // Log the error for debugging
             return {
                 statusCode: 500,
                 body: JSON.stringify({ error: error.message })
@@ -42,3 +45,4 @@ exports.handler = async (event, context) => {
         };
     }
 };
+
