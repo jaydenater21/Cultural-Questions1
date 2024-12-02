@@ -1,9 +1,9 @@
 // netlify/edge-functions/getPosts.js
 
-export async function handler(event) {
+// Use dynamic import for MongoDB to avoid bundling issues with Edge
+export default async function handler(event) {
     try {
-        // Dynamic import for MongoDB client to avoid bundling issues
-        const { MongoClient } = await import('mongodb');  
+        const { MongoClient } = await import('mongodb');  // Dynamically import MongoDB
 
         const uri = "mongodb+srv://<username>:<password>@cluster0.vnroy.mongodb.net/<dbname>?retryWrites=true&w=majority";
         const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -14,7 +14,7 @@ export async function handler(event) {
         const db = client.db('<dbname>');
         const collection = db.collection('posts');
         
-        // Fetch the posts
+        // Fetch posts from the database
         const posts = await collection.find({}).toArray();
 
         return new Response(JSON.stringify(posts), {
@@ -34,3 +34,4 @@ export async function handler(event) {
         });
     }
 }
+
